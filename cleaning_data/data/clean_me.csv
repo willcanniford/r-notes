@@ -1,3 +1,4 @@
-id,name,email,password,remember_token,created_at,updated_at
-1,Will,will@test.com,NA,NULL,18/08/2017 10:53,18/08/2017 10:53
-2,Rob,rob@email.com, ,1245,20/08/2017 15:32,NULL
+id,firstname,surname,email,current_profession,created_at,updated_at
+1,Will,Canniford,will@test.com,Web developer,18/08/2017 10:53,18/08/2017 10:53
+2,Rob, ,rob@email.com,NULL,20/08/2017 15:32,NULL
+3,Jane,NA,jane@domain.co.uk,Software Engineer,20/08/2017 17:19,NA
