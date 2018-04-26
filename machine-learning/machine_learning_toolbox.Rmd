@@ -1,0 +1,59 @@
+---
+title: "Machine Learning Toolbox"
+output: rmarkdown::github_document
+---
+
+This is just a collection of notes and examples from the associated DataCamp course of the same name. The goal of these notes is to try and compile what I know about the various algorithms into a centralised place for references, as well as solidify that knowledge.  
+This course is mainly based around the use of the `caret` package in R.
+
+## RMSE and evaluating performance 
+The root mean squared error, or RMSE, is a common measure of how well a model fits the data. It is commonly caluculated in-sample on your training set, but this isn't ideal as it can lead ot misleading results due to overfitting. This is where your model has been trained on the same data for which it is later evaluated. It way have learnt particular patterns only found in the training examples, and not generalise well when tested on further 'new' data. 
+
+It can be calculated easily in R:
+```{r, eval=FALSE}
+predictions <- predict(model, data, type='response')
+residuals <- predictions - data$response_variable
+rmse <- sqrt(mean(residuals ^ 2))
+```
+
+RMSE is an indication of the model's average error, and is a metric that is has the same units as the response variable. This makes it intuitive to understand and communicate. 
+
+## Out-of-sample error measures 
+If the aim of a model is predictive power, rather than data insight. Then your primary concern should be about the model's ability to perform on *new* data.  
+Therefore, it is good practice, and makes sense, to test the models on new data that wasn't used when the model was trained. This is where your regular training test split will come in. Depending on the amount of data that you have available, you will either do something like a *70/30* split or apply cross validation to estimate a model's performance. 
+
+__Error metrics should be calculated on new data as in-sample validation essentially guarantees overfitting.__
+
+Out-of-sample validation helps you to identify models that are capable of dealing with new data effectively, and are likely to perform well in the future. 
+
+The `caret` package provides a couple of functions that allow for the creation of training and test sets: `createResamples()` and `createFolds()`. 
+
+### Creating your training and test sets 
+Firstly you can order the full dataset randomly, prior to the divide. Hopefully this means that you have succesfully removed any biases that may be present in the dataset as a result of order. 
+
+You can use `sample` to achieve this as it mixes the indices of a dataset that can later be used to subset the original data. 
+
+```{r eval=FALSE}
+rows <- sample(nrow(data))
+data <- data[rows,]
+```
+
+The data would now be mixed thanks to the shuffling of the indices with `sample`. Of a dataset of 10 values, for example, sample would produce the following output: 
+
+```{r}
+sample(10)
+```
+When this is applied to a dataset it has the effect or reordering the rows. Once the data has successfully been randomly reordered, you can split without having to worry about any predefined bias that may have been present due to collection of previous analysis/arrangement. 
+
+#### Creating a genuine split: 80/20
+```{r eval=FALSE}
+split = round(nrow(data) * .8)
+train <- data[1:split, ]
+test <- data[(split+1):nrow(data), ]
+```
+
+
+
+
+
+
