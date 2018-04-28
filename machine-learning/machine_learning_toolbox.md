@@ -48,7 +48,7 @@ The data would now be mixed thanks to the shuffling of the indices with `sample`
 sample(10)
 ```
 
-    ##  [1]  6  1  5 10  2  9  8  3  7  4
+    ##  [1]  3  8  7  2  9  4 10  5  6  1
 
 When this is applied to a dataset it has the effect or reordering the rows. Once the data has successfully been randomly reordered, you can split without having to worry about any predefined bias that may have been present due to collection of previous analysis/arrangement.
 
@@ -59,3 +59,66 @@ split = round(nrow(data) * .8)
 train <- data[1:split, ]
 test <- data[(split+1):nrow(data), ]
 ```
+
+Cross-validation
+----------------
+
+Simply splitting the data once is still risky, even though we previously accounted for order preference that may change our results. A single outlier can vastly change the RMSE value that we get from an out-of-sample test.
+
+One of the most common methods for multiple test sets is cross-validation. It is only use to estimate the out-of-sample error for your model, if all the outputs from cross-validation give similar results then you can be more certain about your model's capability to cope with unseen data. Once you have carried out the cross-validation, you re train your model using the full dataset so that you can make the most of all the information that you have available to you.
+
+To make reducible results you have to use `set.seed()` as cross-validation with `caret` uses random sampling. Cross-validation using this package is done with the `caret::train()` function that supports lots of different kinds of models allows the control over the validation section of the model.
+
+### Cross-validation example
+
+``` r
+data(mtcars)
+model <- train(
+  mpg ~ ., mtcars, 
+  method = 'lm',
+  trControl = trainControl(
+    method = "cv", number = 5,
+    verboseIter = TRUE
+  )
+)
+```
+
+    ## + Fold1: intercept=TRUE 
+    ## - Fold1: intercept=TRUE 
+    ## + Fold2: intercept=TRUE 
+    ## - Fold2: intercept=TRUE 
+    ## + Fold3: intercept=TRUE 
+    ## - Fold3: intercept=TRUE 
+    ## + Fold4: intercept=TRUE 
+    ## - Fold4: intercept=TRUE 
+    ## + Fold5: intercept=TRUE 
+    ## - Fold5: intercept=TRUE 
+    ## Aggregating results
+    ## Fitting final model on full training set
+
+``` r
+print(model)
+```
+
+    ## Linear Regression 
+    ## 
+    ## 32 samples
+    ## 10 predictors
+    ## 
+    ## No pre-processing
+    ## Resampling: Cross-Validated (5 fold) 
+    ## Summary of sample sizes: 26, 26, 26, 25, 25 
+    ## Resampling results:
+    ## 
+    ##   RMSE      Rsquared  MAE     
+    ##   3.566193  0.722907  3.077349
+    ## 
+    ## Tuning parameter 'intercept' was held constant at a value of TRUE
+
+Setting `verboseIter` within the call to `trainControl()` means that each iteration of the model validation is shown on the screen so that you have a better idea of how long the model will take to train.
+
+### Multiple cross-validations
+
+You can do more than a single iteration of cross-validation. While this obviously increases the run time of the model creation, it will further give you a better indication of the model's performance on unseen data. With `caret::train()` this is easily specified using the `repeats` arugment within the function.
+
+Once you have created your model, you can simply use the `predict()` function with the arguments `model` and `newdata`.

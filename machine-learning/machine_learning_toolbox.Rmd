@@ -3,6 +3,10 @@ title: "Machine Learning Toolbox"
 output: rmarkdown::github_document
 ---
 
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+library(caret)
+```
+
 This is just a collection of notes and examples from the associated DataCamp course of the same name. The goal of these notes is to try and compile what I know about the various algorithms into a centralised place for references, as well as solidify that knowledge.  
 This course is mainly based around the use of the `caret` package in R.
 
@@ -52,8 +56,32 @@ train <- data[1:split, ]
 test <- data[(split+1):nrow(data), ]
 ```
 
+## Cross-validation
+Simply splitting the data once is still risky, even though we previously accounted for order preference that may change our results. A single outlier can vastly change the RMSE value that we get from an out-of-sample test. 
+
+One of the most common methods for multiple test sets is cross-validation. It is only use to estimate the out-of-sample error for your model, if all the outputs from cross-validation give similar results then you can be more certain about your model's capability to cope with unseen data. Once you have carried out the cross-validation, you re train your model using the full dataset so that you can make the most of all the information that you have available to you. 
+
+To make reducible results you have to use `set.seed()` as cross-validation with `caret` uses random sampling. Cross-validation using this package is done with the `caret::train()` function that supports lots of different kinds of models allows the control over the validation section of the model. 
 
 
+### Cross-validation example
+```{r}
+data(mtcars)
+model <- train(
+  mpg ~ ., mtcars, 
+  method = 'lm',
+  trControl = trainControl(
+    method = "cv", number = 5,
+    verboseIter = TRUE
+  )
+)
 
+print(model)
+```
 
+Setting `verboseIter` within the call to `trainControl()` means that each iteration of the model validation is shown on the screen so that you have a better idea of how long the model will take to train.  
 
+### Multiple cross-validations
+You can do more than a single iteration of cross-validation. While this obviously increases the run time of the model creation, it will further give you a better indication of the model's performance on unseen data. With `caret::train()` this is easily specified using the `repeats` arugment within the function. 
+
+Once you have created your model, you can simply use the `predict()` function with the arguments `model` and `newdata`.
