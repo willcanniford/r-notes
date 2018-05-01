@@ -1,6 +1,10 @@
 Cleaning Data in R
 ================
 
+-   [Remove and replace all instances of a particular string](#remove-and-replace-all-instances-of-a-particular-string)
+-   [Cleaning data as you load it](#cleaning-data-as-you-load-it)
+-   [Custom function using `purrr`](#custom-function-using-purrr)
+
 Just a collection of notes and functions about cleaning data in R. Most of the code here was written to solve real problems and issues that I came across when dealing with messier datasets in R. I wish I could have found someone who had written a function that did what I wanted it do to...
 
 ### Remove and replace all instances of a particular string
@@ -65,7 +69,8 @@ As you can now see we have alleviated the issue that we had by reading the data 
 
 As I said previously, I actually found out this solution having already written a function that dealt with the messy data after reading it in without specifying the "NULL" string in the `na` of the `read_csv`.
 
-### Function using purrr and map
+Custom function using `purrr`
+-----------------------------
 
 ``` r
 string_to_na <- function(df, string = "NULL") {

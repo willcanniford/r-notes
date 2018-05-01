@@ -1,6 +1,8 @@
 ---
 title: "Cleaning Data in R"
-output: rmarkdown::github_document
+output: 
+  rmarkdown::github_document:
+    toc: true
 ---
 
 ```{r setup, include=FALSE}
@@ -50,7 +52,7 @@ As you can now see we have alleviated the issue that we had by reading the data 
 
 As I said previously, I actually found out this solution having already written a function that dealt with the messy data after reading it in without specifying the "NULL" string in the `na` of the `read_csv`. 
 
-### Function using purrr and map
+## Custom function using `purrr`
 ``` {r}
 string_to_na <- function(df, string = "NULL") {
   df[, map_lgl(df, is.character)] <- map_df(df[, map_lgl(df, is.character)], ~ gsub(paste('^', string, '$', sep = ''), '', .)) %>% map_df(~ ifelse(. == '', NA, .))
