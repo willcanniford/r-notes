@@ -8,6 +8,7 @@ Will Canniford
     -   [Multivariate outliers (Categorical + numeric)](#multivariate-outliers-categorical-numeric)
     -   [Multivariate outliers (Numeric + numeric)](#multivariate-outliers-numeric-numeric)
 -   [Which rows contain outliers?](#which-rows-contain-outliers)
+-   [Strategies for outliers](#strategies-for-outliers)
 
 This file is the notes that I have made based on the data cleaning challenges hosted by Rachel from Kaggle.
 
@@ -92,3 +93,16 @@ print(head(points))
     ## 6      3 -0.722744      FALSE
 
 Now that we have a method for identifying those points that are considered outliers, it is the next step about dealing with them that is equally important.
+
+Strategies for outliers
+-----------------------
+
+You could just remove them from your data frame... This is a fairly rushed option. You would tend to do this when you have a lot of data that isn't considered an outlier, you don't have a lot of time to work through the outliers or you have lots of outliers due to data input error.
+
+You could consider the outliers and inliers as separate entities by splitting them based on the boolean value that we previously created.
+
+If you think that the outliers are artificial and represent untrue values then you can alsways consider removing those values and imputing replacement ones; essentially you are treating those values as `NA` in this instance.
+
+``` r
+data[outlier_scores > 3| outlier_scores < -3, "column_name"] <- NA`
+```
