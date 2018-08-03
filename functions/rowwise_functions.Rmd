@@ -1,21 +1,11 @@
 ---
 title: "Rowwise functions"
-author: "Will Canniford"
-output: 
-  html_document:
-    number_sections: false
-    toc: true
-    toc_depth: 6
-    highlight: tango
-    theme: yeti
-    df_print: kable
+output: rmarkdown::github_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, eval = FALSE, warning = FALSE, error = FALSE, message = FALSE)
 ```
-
-- - - -
 
 I can't count the number of times that I've needed to calculate something on a rowwise basis. This probably isn't that common when you have tidy data, and are trying to generate a new metric for every observation in the data, rather than looking at that data one variable at a time.  
 
