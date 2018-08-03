@@ -37,3 +37,56 @@ result from the `apply` call is then assigned to the variable `na_count`
 on the data frame `df`; you could later filter by this to give you
 access to just those observations with a certain number of missing
 values, or above a threshold that you have defined.
+
+-----
+
+# Using `do`
+
+Another method that I have used in the past, mainly due to the fact that
+you can incorporate it into pipelines (using `%>%`) is by calling the
+function `do` on a row by row basis.
+
+I would probably wager that this isn’t as efficient as the `apply`
+method, but nonetheless it is an option if you are looking to apply a
+method by a row. It probably offers slightly more capability compared to
+the apply, as you can do as much computation within the section as you
+like.
+
+Note that I also use the `dplyr` function `rowwise()` here to
+
+*Following the same example as before*
+
+``` r
+library(tidyverse)
+df <- expand.grid(x = 1:3, y = 3:1, z = NA)
+df %>%
+  rowwise() %>%
+  do({
+    # Convert the row into a tibble
+    row <- as_tibble(.)
+    # Mutate a new column for the row
+    row <- row %>% mutate(na_count = sum(is.na(.)))
+    # Return the altered row
+    row
+  })
+```
+
+    ## Source: local data frame [9 x 4]
+    ## Groups: <by row>
+    ## 
+    ## # A tibble: 9 x 4
+    ##       x     y z     na_count
+    ## * <int> <int> <lgl>    <int>
+    ## 1     1     3 NA           1
+    ## 2     2     3 NA           1
+    ## 3     3     3 NA           1
+    ## 4     1     2 NA           1
+    ## 5     2     2 NA           1
+    ## 6     3     2 NA           1
+    ## 7     1     1 NA           1
+    ## 8     2     1 NA           1
+    ## 9     3     1 NA           1
+
+This is obviously a slightly over the top example, but I am just
+highlighting a way in which you can achieve a function, or possibly set
+of functions, being called by row.
