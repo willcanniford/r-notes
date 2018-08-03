@@ -1,5 +1,6 @@
 ---
 title: "Cleaning Data in R"
+author: "Will Canniford"
 output: 
   rmarkdown::github_document:
     toc: true
@@ -12,7 +13,7 @@ library(tidyverse)
 library(purrr)
 ```
 
-Just a collection of notes and functions about cleaning data in R. Most of the code here was written to solve real problems and issues that I came across when dealing with messier datasets in R. I wish I could have found someone who had written a function that did what I wanted it do to... 
+This is a collection of notes and functions about cleaning data in R. Most of the code here was written to solve real problems and issues that I came across when dealing with messier datasets in R. I wish I could have found someone who had written a function that did what I wanted it do to... 
 
 ### Remove and replace all instances of a particular string 
 
