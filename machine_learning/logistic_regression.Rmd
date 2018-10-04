@@ -4,24 +4,38 @@ output:
   rmarkdown::github_document:
     toc: true
 ---
-Logistic regression is one of the more common predicitive analyses and is the classification counterpart to linear regression. It is usually used to describe the relationship between a binary response/dependent variable and any number of predictor/independent variables. Some assumptions of the logisitic regression should be that there should be no outliers in the data, the response variable must be binary, or dichotomous, and multicollinearity should be avoided (as with linear regressions). The fact that you are predicting a qualitative target variable means that this is a classification problem, but remains supervised learning. 
+
+Logistic regression is one of the more common predictive algorithms and is the binary classification counterpart to linear regression. It is usually used to describe the relationship between a binary response/dependent variable and any number of predictor/independent variables.  
+
+Some assumptions of the logistic regression are:  
+
++ There should be no outliers in the data  
++ The response variable must be binary, or dichotomous
++ Multicollinearity should be avoided (as with linear regressions). 
+  
+- - - -
+  
+The fact that you are predicting a qualitative target variable means that this is a classification problem, but remains supervised learning as we know the classes, or factors, that we are trying to predict.  
+
 Predictions are mapped between 0 and 1 through the logit function that is applied, so the predictions can be interpreted as class probabilities.
 
-Typically, a logistic regression can be created in R using the following functions:
+The main way that a logistic regression is performed in R is through using the `glm` function and package. You then specify the family/distribution that the generalized linear regression should use via the `family` argument.  
 
 ```{r eval=FALSE, message=FALSE}
-mode <- glm(formula, data, family = binomial)
-predictions <- predict(model, data, type = 'response')
+mode <- glm(formula, data, family = "binomial")
+predictions <- predict(model, data, type = "response")
 ```
 
-Above we are using the function `glm()` which, by itself, isn't for logistic regression, but when you specify that `family = binomial` then the result is a logisitic regression model. 
-Something that you might want to consider when using logistic regression to *one-hot encode* your categorical variables so that they have a boolean equivalent. One way of doing this is through using the `vtreat` package: I will over this at a different stage. 
+Something that you might want to consider when using logistic regression to *one-hot encode* your categorical variables so that they have a boolean equivalent. One way of doing this is through using the `vtreat` package: I will cover this at a different stage. 
 
-It is still good practice to create testing and training sets to avoid overfitting in the model performance metrics. This can be done with any type of model by varying the testing and training sets during the creation of the model. 
+It is still good practice to create testing and training sets to avoid over-fitting in the model performance metrics. This can be done with any type of model by varying the testing and training sets during the creation of the model. 
 
-#### Creating test and training sets refresher
-Depending on the size of your data, the percentage split will differ. The less data you have then you might have to put aside more of the data so that the test set is substantial enough to give a clear indication of the out-of-sample metrics. 
-**_Cross-validation_** can also achieve this through creating multiple models and performing multiple out-of-sample assessments and then averaging them together. 
+## Creating test and training sets refresher
+Depending on the size of your data, the percentage split will differ. The less data you have then you might have to put aside more of the data so that the test set is substantial enough to give a clear indication of the out-of-sample metrics.  
+
+**_Cross-validation_** can also achieve this through creating multiple models and performing multiple out-of-sample assessments and then averaging them together. Cross-validation is probably best done using the `caret` package, where you are able to make reproducible model comparisons using the `trainControl` object and `createFolds` function.  
+
+I will show a simple test/train split below that just uses the `sample` function to create a random set of indexes that we can use to split our data.  
 
 ```{r eval=FALSE, message=FALSE, warning=FALSE}
 # Create random indices
@@ -34,21 +48,18 @@ split <- round(nrow(data) * 0.8)
 train <- data[1:split, ]
 test <- data[(split+1):nrow(data), ]
 ```
-
+  
+  
 ## Plotting regressions
+For some simple logistic regressions, you might be able to plot them using `ggplot`. You can do do using the `geom_smooth` function and passing in the arguments that you see below. You could do this to create a line that shows the predictions from other types of linear models as well through varying the `family` argument as you would when you're creating the model outside of the `ggplot` call.  
+
+`binomial` is appropriate for logistic regression.  
+`gaussian` for linear regression.  
+`poisson` for Poisson when the response variable is a count.  
+`quasipoisson` should be used when the response variable doesn't meet the assumptions of the Poisson distribution. 
 
 ```{r eval=FALSE, message=FALSE, warning=FALSE}
 ggplot(dataset, aes(x = predictor_variable, y = binomial_variable)) +
     geom_point() + 
     geom_smooth(method = "glm", method.args = list(family = "binomial")) 
 ```
-
-You can alter this depending on the sort of variable that you are trying to predict. You will change the family argument of the glm model so that the model that is built is appropriate for the type of regression analysis that you are doing. 
-
-`binomial` is appropriate for logistic regression.  
-`gaussian` for linear regression.  
-`poisson` for poisson when the response variable is a count.  `quasipoisson` should be used when the response variable doesn't meet the assumptions of the poisson distribution. 
-
-
-
-
