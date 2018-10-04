@@ -1,6 +1,13 @@
 Machine Learning Toolbox
 ================
 
+-   [RMSE and evaluating performance](#rmse-and-evaluating-performance)
+-   [Out-of-sample error measures](#out-of-sample-error-measures)
+    -   [Creating your training and test sets](#creating-your-training-and-test-sets)
+-   [Cross-validation](#cross-validation)
+    -   [Cross-validation example](#cross-validation-example)
+    -   [Multiple cross-validations](#multiple-cross-validations)
+
 This is just a collection of notes and examples from the associated DataCamp course of the same name. The goal of these notes is to try and compile what I know about the various algorithms into a centralised place for references, as well as solidify that knowledge.
 This course is mainly based around the use of the `caret` package in R.
 
@@ -48,7 +55,7 @@ The data would now be mixed thanks to the shuffling of the indices with `sample`
 sample(10)
 ```
 
-    ##  [1]  3  8  7  2  9  4 10  5  6  1
+    ##  [1]  7  6  2  8  5  4  9  3 10  1
 
 When this is applied to a dataset it has the effect or reordering the rows. Once the data has successfully been randomly reordered, you can split without having to worry about any predefined bias that may have been present due to collection of previous analysis/arrangement.
 
@@ -107,11 +114,11 @@ print(model)
     ## 
     ## No pre-processing
     ## Resampling: Cross-Validated (5 fold) 
-    ## Summary of sample sizes: 26, 26, 26, 25, 25 
+    ## Summary of sample sizes: 26, 27, 26, 25, 24 
     ## Resampling results:
     ## 
-    ##   RMSE      Rsquared  MAE     
-    ##   3.566193  0.722907  3.077349
+    ##   RMSE      Rsquared   MAE     
+    ##   3.692748  0.7484661  2.980641
     ## 
     ## Tuning parameter 'intercept' was held constant at a value of TRUE
 

@@ -1,6 +1,8 @@
 ---
 title: "Machine Learning Toolbox"
-output: rmarkdown::github_document
+output: 
+  rmarkdown::github_document:
+    toc: true
 ---
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
