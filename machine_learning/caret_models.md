@@ -13,6 +13,8 @@ projects can primarily be found on my [Kaggle
 profile](https://www.kaggle.com/willcanniford), or there is some record
 of them here on [my github](https://github.com/willcanniford/kaggle).
 
+-----
+
 ## Small worked example using the `Sonar` dataset
 
 The `Sonar` dataset is a classic example dataset that can be obtained
@@ -107,3 +109,51 @@ glimpse(Sonar$Class)
 Ok, we’ve got 2 classes, so we can start with a logistic regression, but
 we also have algorithms like knn, random forest and support vector
 machine that we can also use.
+
+-----
+
+## Training and test splits
+
+Having spent some time working with cross-validation and the more
+traditional test/train splits, I think that the best method for testing
+model predictive power and capacity is through combining both of them.
+
+### Create a training set and test set
+
+Creating a split is easy using the `caret` package using the
+`createDataPartition`, and passing in the split level that want,
+i.e. 20/80 would be `p=0.8`.
+
+``` r
+set.seed(1)
+indices <- caret::createDataPartition(Sonar$Class, p = 0.8, list=FALSE)
+
+nrow(indices);nrow(Sonar)
+```
+
+    ## [1] 167
+
+    ## [1] 208
+
+You can then take the indices that we have created, apply them to split
+the original data set and then see the distribution of classes between
+the `test` and `train` sets.
+
+``` r
+train <- Sonar[indices,]
+test <- Sonar[-indices,]
+
+table(train$Class);table(test$Class)
+```
+
+    ## 
+    ##  M  R 
+    ## 89 78
+
+    ## 
+    ##  M  R 
+    ## 22 19
+
+We can see that the function creates a good balance between both
+classes, which may not be the case when you just use random sampling
+with small data sets.
