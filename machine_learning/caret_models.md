@@ -4,7 +4,7 @@ Building and comparing models with `caret`
 `caret` is an immensely powerful
 [package](http://topepo.github.io/caret/index.html) for R which allows
 for the control of training parameters, reproducible model comparison,
-quick model comparison, tuning of hyperparameters and preprocessing of
+quick model comparison, tuning of hyper-parameters and preprocessing of
 data, among others.
 
 I’ve had a fair bit of experience building models with it, and trying to
@@ -15,9 +15,9 @@ of them here on [my github](https://github.com/willcanniford/kaggle).
 
 -----
 
-## Small worked example using the `Sonar` dataset
+## Small worked example using the `Sonar` data set
 
-The `Sonar` dataset is a classic example dataset that can be obtained
+The `Sonar` data set is a classic example data set that can be obtained
 through the `mlbench` package. I’ll load and just show the first few
 rows to get an idea for the structure and what we might be able to do
 with it.
@@ -106,7 +106,7 @@ glimpse(Sonar$Class)
 
     ##  Factor w/ 2 levels "M","R": 2 2 2 2 2 2 2 2 2 2 ...
 
-Ok, we’ve got 2 classes, so we can start with a logistic regression, but
+OK, we’ve got 2 classes, so we can start with a logistic regression, but
 we also have algorithms like knn, random forest and support vector
 machine that we can also use.
 
@@ -174,3 +174,43 @@ complete model and, particularly, comparing them.
 Having the final `test` step allows you to make a final predict on truly
 unseen data, as the final model is created by training on the entire
 `train` set after the cross-validation has done its relevant splits.
+
+### Creating cross-validation folds using `caret`
+
+Creating set folds for indices for the cross-validation phase of the
+model creation allows for reproducability and better comparisons as you
+know that all of the models are going to be using the same data sets
+even when they are producing their out-of-sample estimates during
+`caret::train`.
+
+Once you have created the folds, you can pass them in to the
+`trainControl` object, which is then shared between model `train`s.
+
+Below we can create a list of 5 training sets from within `train` using
+`caret::createFolds`. Note that I have chosen to return the training
+sets, but if you set `returnTrain = FALSE` then the function would
+return the test sets for the cv folds.
+
+``` r
+cv_folds <- caret::createFolds(y = train$Class, 
+                               k = 5, 
+                               returnTrain = TRUE)
+str(cv_folds)
+```
+
+    ## List of 5
+    ##  $ Fold1: int [1:134] 1 2 3 4 7 8 9 10 11 13 ...
+    ##  $ Fold2: int [1:133] 2 3 4 5 6 7 8 9 12 15 ...
+    ##  $ Fold3: int [1:133] 1 2 4 5 6 8 10 11 12 13 ...
+    ##  $ Fold4: int [1:134] 1 2 3 4 5 6 7 8 9 10 ...
+    ##  $ Fold5: int [1:134] 1 3 5 6 7 9 10 11 12 13 ...
+
+If you look at the documentation for the `trainControl` function
+([here](https://www.rdocumentation.org/packages/caret/versions/6.0-80/topics/trainControl))
+then you will notice the argument `index` lets us pass in this list to
+set the training indexes for the cross validation sets.
+
+We will use this when we create a single `trainControl` object to be
+used with all of our models, thus ensuring that the out-of-sample
+estimates are comparable (alongside setting the seed prior to each
+`train` call to cover other stochastic processes).

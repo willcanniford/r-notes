@@ -5,14 +5,14 @@ output:
     toc: true
 ---
 
-`caret` is an immensely powerful [package](http://topepo.github.io/caret/index.html) for R which allows for the control of training parameters, reproducible model comparison, quick model comparison, tuning of hyperparameters and preprocessing of data, among others.  
+`caret` is an immensely powerful [package](http://topepo.github.io/caret/index.html) for R which allows for the control of training parameters, reproducible model comparison, quick model comparison, tuning of hyper-parameters and preprocessing of data, among others.  
 
 I've had a fair bit of experience building models with it, and trying to learn the best practices of machine learning and model building. Those projects can primarily be found on my [Kaggle profile](https://www.kaggle.com/willcanniford), or there is some record of them here on [my github](https://github.com/willcanniford/kaggle).
 
 - - - -
 
-## Small worked example using the `Sonar` dataset
-The `Sonar` dataset is a classic example dataset that can be obtained through the `mlbench` package. I'll load and just show the first few rows to get an idea for the structure and what we might be able to do with it.  
+## Small worked example using the `Sonar` data set
+The `Sonar` data set is a classic example data set that can be obtained through the `mlbench` package. I'll load and just show the first few rows to get an idea for the structure and what we might be able to do with it.  
 
 ```{r load_package_and_data, message=FALSE}
 library(tidyverse)
@@ -28,7 +28,7 @@ _*Note*_: this is a *classification* problem as we are predicting a category.
 glimpse(Sonar$Class)
 ```  
 
-Ok, we've got 2 classes, so we can start with a logistic regression, but we also have algorithms like knn, random forest and support vector machine that we can also use. 
+OK, we've got 2 classes, so we can start with a logistic regression, but we also have algorithms like knn, random forest and support vector machine that we can also use. 
 
 - - - - 
  
@@ -63,3 +63,21 @@ Now we could just train the model using the `train` data and then test on the `t
 * Test the final model using the `test` set to conclude the model finding process. 
 
 Having the final `test` step allows you to make a final predict on truly unseen data, as the final model is created by training on the entire `train` set after the cross-validation has done its relevant splits. 
+
+### Creating cross-validation folds using `caret`
+Creating set folds for indices for the cross-validation phase of the model creation allows for reproducability and better comparisons as you know that all of the models are going to be using the same data sets even when they are producing their out-of-sample estimates during `caret::train`. 
+
+Once you have created the folds, you can pass them in to the `trainControl` object, which is then shared between model `train`s.  
+
+Below we can create a list of 5 training sets from within `train` using `caret::createFolds`. Note that I have chosen to return the training sets, but if you set `returnTrain = FALSE` then the function would return the test sets for the cv folds.  
+
+```{r create_cv_indices}
+cv_folds <- caret::createFolds(y = train$Class, 
+                               k = 5, 
+                               returnTrain = TRUE)
+str(cv_folds)
+```  
+
+If you look at the documentation for the `trainControl` function ([here](https://www.rdocumentation.org/packages/caret/versions/6.0-80/topics/trainControl)) then you will notice the argument `index` lets us pass in this list to set the training indexes for the cross validation sets.  
+
+We will use this when we create a single `trainControl` object to be used with all of our models, thus ensuring that the out-of-sample estimates are comparable (alongside setting the seed prior to each `train` call to cover other stochastic processes).
