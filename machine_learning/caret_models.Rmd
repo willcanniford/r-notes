@@ -55,3 +55,11 @@ table(train$Class);table(test$Class)
 ```  
 
 We can see that the function creates a good balance between both classes, which may not be the case when you just use random sampling with small data sets. 
+
+Now we could just train the model using the `train` data and then test on the `test`. This is what I consider to be a *classic* train/test split process, but having explored the world of `caret` and realised the cross-validation capability I think there is another step to building a complete model and, particularly, comparing them.  
+
+* Perform cross-validation on the testing set.  
+* Compare the models using the out-of-sample estimates made during the training of the models using `caret::train` (The final model will be created using the full `train` set). 
+* Test the final model using the `test` set to conclude the model finding process. 
+
+Having the final `test` step allows you to make a final predict on truly unseen data, as the final model is created by training on the entire `train` set after the cross-validation has done its relevant splits. 
