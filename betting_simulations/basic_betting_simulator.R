@@ -2,27 +2,33 @@
 library(tidyverse)
 library(reshape2)
 
-simulator <- function(starting_bank = 10, n_bet, stake_proportion, odds_range = c(1.6, 1.8), win_perc) {
+simulator <- function(starting_bank = 10, 
+                      n_bet = 20, 
+                      stake_proportion = 0.25, 
+                      odds_range = c(1.6, 1.8), 
+                      win_perc = 50){
   # Loop through n_bet and simulate the result
   bank = starting_bank;
   bank_tracker = c(bank)
   
   for(i in 1:n_bet) {
+    # Pick a random odd between the range defined
     odds <- sample(seq(odds_range[1], odds_range[2], 0.01), 1)
     chance <- sample(1:100, 1)
+    
+    # Did they win that particular bet? 
     if(chance <= win_perc){
       bank = round((bank * (1 - stake_proportion)) + (bank * stake_proportion * odds), 2)
       stake <- bank * stake_proportion
       winnings <- (bank * stake_proportion * odds)
       print(paste("Won bet ", i, ": ", bank, sep = "" ))
     } else {
-      bank = round(bank * 0.75)
+      bank = round(bank * (1 - stake_proportion), 2)
       print(paste("Lost bet ", i, ": ", bank, sep = "" ))
     }
     bank_tracker = c(bank_tracker,  bank)
   }
   return(bank_tracker)
-
 }
 
 
