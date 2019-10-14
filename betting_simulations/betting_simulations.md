@@ -57,7 +57,7 @@ bet (constant).
 
 ``` r
 set.seed(100)
-simulator()
+(results <- simulator())
 ```
 
     ## [1] "Won bet 1: 11.65"
@@ -83,3 +83,22 @@ simulator()
 
     ##  [1] 10.00 11.65 13.72 16.09 19.19 22.60 16.95 19.70 14.77 17.13 12.85
     ## [12]  9.64  7.23  8.46  6.35  7.48  5.61  4.21  3.16  2.37  2.84
+
+``` r
+tibble(bank = results, 
+       n_bet = 1:length(results), 
+       in_profit = ifelse(bank >= 10, T, F)) %>%
+  ggplot(aes(n_bet, bank)) + 
+    geom_hline(yintercept = results[1], alpha = 0.25) + 
+    geom_line(color = '#7f8c8d') + 
+    geom_point(aes(color = in_profit)) + 
+    theme_minimal() + 
+    scale_colour_manual(values = c("TRUE" = "#27ae60", "FALSE" = "#e74c3c")) +
+    labs(title = "Single simulation plotted")
+```
+
+![](betting_simulations_files/figure-gfm/single_simulation_plotting-1.png)<!-- -->
+
+A good start to the simulation meant that we were in profit. The longer
+the betting goes on, you would think that the more likely you are to be
+in the negative.

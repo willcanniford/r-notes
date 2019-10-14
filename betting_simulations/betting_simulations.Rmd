@@ -3,13 +3,13 @@ title: "Betting Simulations"
 output: rmarkdown::github_document
 ---
 
-```{r include=FALSE}
+```{r define_global_settings, include=FALSE}
 knitr::opts_chunk$set(warning=FALSE, error=FALSE, message=FALSE)
 ```
 
 Load the relevant packages that I will be using during these simple simulations. 
 
-```{r}
+```{r load_packages}
 library(tidyverse)
 library(reshape2)
 ```
@@ -18,7 +18,7 @@ There are a lot of systems out there for trying to make betting a consistent and
 
 Below I define a simulator function that defines a number of basic parameters that can start you off in simulating how betting methods would work if applied over a number of individual bets. 
 
-```{r}
+```{r define_simulator_function}
 simulator <- function(starting_bank = 10, 
                       n_bet = 20, 
                       stake_proportion = 0.25, 
@@ -55,8 +55,22 @@ simulator <- function(starting_bank = 10,
 *odds_range*: the range of odds that you're betting on.  
 *win_perc*: the average win percentage within the odds range.  
 
-```{r}
+```{r generate_single_simulation}
 set.seed(100)
-simulator()
+(results <- simulator())
 ```
 
+```{r single_simulation_plotting, fig.dim=c(10,4)}
+tibble(bank = results, 
+       n_bet = 1:length(results), 
+       in_profit = ifelse(bank >= 10, T, F)) %>%
+  ggplot(aes(n_bet, bank)) + 
+    geom_hline(yintercept = results[1], alpha = 0.25) + 
+    geom_line(color = '#7f8c8d') + 
+    geom_point(aes(color = in_profit)) + 
+    theme_minimal() + 
+    scale_colour_manual(values = c("TRUE" = "#27ae60", "FALSE" = "#e74c3c")) +
+    labs(title = "Single simulation plotted")
+```
+
+A good start to the simulation meant that we were in profit. The longer the betting goes on, you would think that the more likely you are to be in the negative. 
