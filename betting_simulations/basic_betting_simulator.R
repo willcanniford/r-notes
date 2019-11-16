@@ -1,7 +1,8 @@
-# Load in the relevant packages
+# Load in relevant packages
 library(tidyverse)
 library(reshape2)
 
+# Define the function
 simulator <- function(starting_bank = 10, 
                       n_bet = 20, 
                       stake_proportion = 0.25, 
@@ -28,8 +29,12 @@ simulator <- function(starting_bank = 10,
     }
     bank_tracker = c(bank_tracker,  bank)
   }
-  return(bank_tracker)
+  invisible(bank_tracker)
 }
+
+# Test the function 
+set.seed(100)
+simulator()
 
 
 # Set up multiple trials 
@@ -37,8 +42,9 @@ perms <- 30
 trials <- 25
 results_frame <- matrix(ncol = trials, nrow = (perms + 1))
 
+set.seed(100)
 for(i in 1:trials){
-  results <- unlist(simulator(starting_bank = 25, n_bet = perms, stake_proportion = 0.20, odds_range = c(1.4, 1.6), win_perc = 70))
+  results <- unlist(simulator(n_bet = 30))
   results_frame[,i] <- results
 }
 results_frame
@@ -46,19 +52,25 @@ results_frame
 new_results <- as.data.frame(results_frame)
 new_results[,"count"] <- seq(1:(perms+1))
 
-ggplot(data = new_results, aes(x=count)) + geom_line(aes(y=V1)) + geom_line(aes(y=V2)) + geom_line(aes(y=V3)) + geom_line(aes(y=V4)) + geom_line(aes(y=V5)) + geom_line(aes(y=V6)) + geom_line(aes(y=V7)) + geom_line(aes(y=V8)) + geom_line(aes(y=V9)) + geom_line(aes(y=V10)) + 
-  geom_hline(yintercept = 25, colour = "red")
-new_results[,1]
-p <- ggplot()
-for(i in 1:25){
-  results <- new_results[,i]
-  p <- p + geom_line(data = new_results, aes(x = count, y=results))
-}
-p
+ggplot(data = new_results, aes(x=count)) + 
+  geom_line(aes(y=V1)) + 
+  geom_line(aes(y=V2)) + 
+  geom_line(aes(y=V3)) + 
+  geom_line(aes(y=V4)) + 
+  geom_line(aes(y=V5)) + 
+  geom_line(aes(y=V6)) + 
+  geom_line(aes(y=V7)) + 
+  geom_line(aes(y=V8)) + 
+  geom_line(aes(y=V9)) + 
+  geom_line(aes(y=V10)) + 
+  geom_hline(yintercept = 10, colour = "red") # Plot the starting bank
 
-
-long_results <- melt(new_results, id.vars = "count")
-
+# Reshape and then plot the data
+new_results %>% rename(bet_number = count) %>% 
+  tidyr::gather(perm, value, -bet_number) %>%
+  ggplot(aes(x = bet_number, y = value, group = perm)) + 
+    geom_line() + 
+    geom_hline(yintercept = 10, colour = '#e67e22')
 
 profitable <- long_results %>% filter(count == 31) %>% mutate(profit = value > 25) %>% filter(profit == TRUE) %>% select(variable)
 test_results <- long_results %>% mutate(profit = variable %in% profitable$variable)
