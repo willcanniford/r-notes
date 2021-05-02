@@ -106,5 +106,18 @@ new_tailwind_palettes <- list(
   '900' = new_default_colour_palette[grep('.*-900', names(new_default_colour_palette))]
 )
 
-save(new_default_colour_palette, file = 'data/default_colour_palette.rda')
-save(new_tailwind_palettes, file = 'data/tailwind_palettes.rda')
+save(default_colour_palette, file = 'data/default_colour_palette.rda')
+save(tailwind_palettes, file = 'data/tailwind_palettes.rda')
+tailwind_palettes <- new_tailwind_palettes
+install.packages('devtools')
+library(roxygen2)
+
+library(devtools)
+install.packages('testthat')
+
+devtools::load_all('../ggtailwind')
+devtools::document()
+
+rename_rda(oldname= 'new_default_colour_palette', oldfile='data/default_colour_palette.rda', newname='default_colour_palette', newfile='data/default_colour_palette.rda')
+default_colour_palette <- new_default_colour_palette
+
